@@ -59,23 +59,7 @@ main.o: /home/guilhermej14/projetos/DSTest/DSSnake/source/main.c \
  /opt/devkitpro/libnds/include/nds/arm9/video.h \
  /opt/devkitpro/libnds/include/nds/arm9/videoGL.h \
  /opt/devkitpro/libnds/include/nds/arm9/nand.h \
- /opt/devkitpro/nflib/include/nf_lib.h \
- /opt/devkitpro/nflib/include/nf_2d.h \
- /opt/devkitpro/nflib/include/nf_sprite256.h \
- /opt/devkitpro/nflib/include/nf_3d.h \
- /opt/devkitpro/nflib/include/nf_affinebg.h \
- /opt/devkitpro/nflib/include/nf_tiledbg.h \
- /opt/devkitpro/nflib/include/nf_basic.h \
- /opt/devkitpro/nflib/include/nf_bitmapbg.h \
- /opt/devkitpro/nflib/include/nf_collision.h \
- /opt/devkitpro/nflib/include/nf_media.h \
- /opt/devkitpro/nflib/include/nf_mixedbg.h \
- /opt/devkitpro/nflib/include/nf_sound.h \
- /opt/devkitpro/nflib/include/nf_sprite256.h \
- /opt/devkitpro/nflib/include/nf_sprite3d.h \
- /opt/devkitpro/nflib/include/nf_text16.h \
- /opt/devkitpro/nflib/include/nf_text.h \
- /opt/devkitpro/nflib/include/nf_tiledbg.h
+ /opt/devkitpro/libnds/include/gl2d.h
 /opt/devkitpro/libnds/include/nds.h:
 /opt/devkitpro/libnds/include/nds/libversion.h:
 /opt/devkitpro/libnds/include/nds/ndstypes.h:
@@ -136,20 +120,4 @@ main.o: /home/guilhermej14/projetos/DSTest/DSSnake/source/main.c \
 /opt/devkitpro/libnds/include/nds/arm9/video.h:
 /opt/devkitpro/libnds/include/nds/arm9/videoGL.h:
 /opt/devkitpro/libnds/include/nds/arm9/nand.h:
-/opt/devkitpro/nflib/include/nf_lib.h:
-/opt/devkitpro/nflib/include/nf_2d.h:
-/opt/devkitpro/nflib/include/nf_sprite256.h:
-/opt/devkitpro/nflib/include/nf_3d.h:
-/opt/devkitpro/nflib/include/nf_affinebg.h:
-/opt/devkitpro/nflib/include/nf_tiledbg.h:
-/opt/devkitpro/nflib/include/nf_basic.h:
-/opt/devkitpro/nflib/include/nf_bitmapbg.h:
-/opt/devkitpro/nflib/include/nf_collision.h:
-/opt/devkitpro/nflib/include/nf_media.h:
-/opt/devkitpro/nflib/include/nf_mixedbg.h:
-/opt/devkitpro/nflib/include/nf_sound.h:
-/opt/devkitpro/nflib/include/nf_sprite256.h:
-/opt/devkitpro/nflib/include/nf_sprite3d.h:
-/opt/devkitpro/nflib/include/nf_text16.h:
-/opt/devkitpro/nflib/include/nf_text.h:
-/opt/devkitpro/nflib/include/nf_tiledbg.h:
+/opt/devkitpro/libnds/include/gl2d.h:
