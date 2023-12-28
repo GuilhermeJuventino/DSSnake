@@ -33,9 +33,11 @@ struct segment
 	int y;
 };
 
+struct segment segments[MAX_SEGMENTS];
+
 // Function declarations
 void drawSnake(struct snakeHead head, struct segment segments[]);
-void moveSnake(struct snakeHead head, struct segment segments[]);
+void moveSnake(struct snakeHead *head, struct segment (*segments)[MAX_SEGMENTS]);
 
 int main(int argc, char **argv)
 {
@@ -55,15 +57,21 @@ int main(int argc, char **argv)
     head.color = RGB15(255, 255, 255);
     head.direction = "DOWN";
 
-    int starting_size = 3;
+    int starting_size = 4;
     head.size = starting_size;
 
-    struct segment segments[MAX_SEGMENTS];
     segments[0].x = head.x;
     segments[0].y = head.y - 10;
 
     segments[1].x = head.x;
     segments[1].y = head.y - 20;
+
+    segments[2].x = head.x;
+    segments[2].y = head.y - 30;
+
+    struct snakeHead *headReference = &head;
+    struct segment (*segmentsReference)[MAX_SEGMENTS] = &segments;
+    
 
     int keys;
 
@@ -109,10 +117,10 @@ int main(int argc, char **argv)
 		head.x += 5;
 	}
 	*/
-    	printf("\n %s", head.direction);
+    	//printf("\n %s", head.direction);
 	
 	// Updating and drawing the screen
-	moveSnake(head, segments);
+	moveSnake(headReference, segmentsReference);
 	drawSnake(head, segments);
 	glFlush(0);
 	    
@@ -134,7 +142,7 @@ void drawSnake(struct snakeHead head, struct segment segments[])
 	glBoxFilled(head.x - head.width, head.y - head.height, head.x + head.width, head.y + head.height, head.color);
 
 	// Drawing the snake's body
-	for (int i = 0; i < head.size - 1; i++)
+	for (int i = 0; i < head.size - 2; i++)
 	{
 		glBoxFilled(segments[i].x - head.width, segments[i].y - head.height, segments[i].x + head.width, segments[i].y + head.height, head.color);
 	}
@@ -142,83 +150,41 @@ void drawSnake(struct snakeHead head, struct segment segments[])
 	glEnd2D();
 }
 
-void moveSnake(struct snakeHead head, struct segment segments[])
+void moveSnake(struct snakeHead *head, struct segment (*segments)[MAX_SEGMENTS])
 {
-	int prev_x = head.x;
-	int prev_y = head.y;
+	int prev_x = head -> x;
+	int prev_y = head -> y;
 
-	if (strcmp(head.direction, "UP") == 0)
+	if (strcmp(head -> direction, "UP") == 0)
 	{
-		head.y -= 5;
-
-		for (int i = 0; i < head.size - 1; i++)
-		{
-			int new_x = prev_x;
-			int new_y = prev_y;
-
-			int seg_prev_x = segments[i].x;
-			int seg_prev_y = segments[i].y;
-
-			segments[i].x = new_x;
-			segments[i].y = new_y;
-
-			prev_x = seg_prev_x;
-			prev_y = seg_prev_y;
-
-		}
-	} else if (strcmp(head.direction, "DOWN") == 0)
+		head -> y -= 2;
+	} else if (strcmp(head -> direction, "DOWN") == 0)
 	{
-		head.y += 5;
-
-		for (int i = 0; i < head.size - 1; i++)
-		{
-			int new_x = prev_x;
-			int new_y = prev_y;
-
-			int seg_prev_x = segments[i].x;
-			int seg_prev_y = segments[i].y;
-
-			segments[i].x = new_x;
-			segments[i].y = new_y;
-
-			prev_x = seg_prev_x;
-			prev_y = seg_prev_y;
-		}
-	} else if (strcmp(head.direction, "LEFT") ==  0)
+		head -> y += 2;
+	} else if (strcmp(head -> direction, "LEFT") ==  0)
 	{
-		head.x -= 5;
-
-		for (int i = 0; i < head.size - 1; i++)
-		{
-			int new_x = prev_x;
-			int new_y = prev_y;
-
-			int seg_prev_x = segments[i].x;
-			int seg_prev_y = segments[i].y;
-
-			segments[i].x = new_x;
-			segments[i].y = new_y;
-
-			prev_x = seg_prev_x;
-			prev_y = seg_prev_y;
-		}
-	} else if (strcmp(head.direction, "RIGHT") == 0)
+		head -> x -= 2;
+	} else if (strcmp(head -> direction, "RIGHT") == 0)
 	{
-		head.x += 5;
+		head -> x += 2;
 
-		for (int i = 0; i < head.size - 1; i++)
-		{
-			int new_x = prev_x;
-			int new_y = prev_y;
-
-			int seg_prev_x = segments[i].x;
-			int seg_prev_y = segments[i].y;
-
-			segments[i].x = new_x;
-			segments[i].y = new_y;
-
-			prev_x = seg_prev_x;
-			prev_y = seg_prev_y;
-		}
 	}
+	
+	
+	for (int i = 0; i < head -> size - 2; i++)
+	{
+		int new_x = prev_x;
+		int new_y = prev_y;
+
+		int seg_prev_x = segments[i] -> x;
+		int seg_prev_y = segments[i] -> y;
+
+		segments[i] -> x = new_x;
+		segments[i] -> y = new_y;
+
+		prev_x = seg_prev_x;
+		prev_y = seg_prev_y;
+
+	}
+	
 }
