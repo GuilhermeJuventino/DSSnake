@@ -1,10 +1,3 @@
-// SPDX-License-Identifier: CC0-1.0
-//
-// SPDX-FileContributor: NightFox & Co., 2009-2011
-//
-// NightFox's Lib Template
-// http://www.nightfoxandco.com
-
 #include <stdio.h>
 #include <string.h>
 #include <nds.h>
@@ -37,7 +30,7 @@ struct segment segments[MAX_SEGMENTS];
 
 // Function declarations
 void drawSnake(struct snakeHead head, struct segment segments[]);
-void moveSnake(struct snakeHead *head, struct segment (*segments)[MAX_SEGMENTS]);
+void moveSnake(struct snakeHead *head, struct segment segments[]);
 
 int main(int argc, char **argv)
 {
@@ -57,7 +50,7 @@ int main(int argc, char **argv)
     head.color = RGB15(255, 255, 255);
     head.direction = "DOWN";
 
-    int starting_size = 4;
+    int starting_size = 3;
     head.size = starting_size;
 
     segments[0].x = head.x;
@@ -69,9 +62,7 @@ int main(int argc, char **argv)
     segments[2].x = head.x;
     segments[2].y = head.y - 30;
 
-    struct snakeHead *headReference = &head;
-    struct segment (*segmentsReference)[MAX_SEGMENTS] = &segments;
-    
+    struct snakeHead *headReference = &head; 
 
     int keys;
 
@@ -98,29 +89,8 @@ int main(int argc, char **argv)
 		head.direction = "RIGHT";
 	}
 	
-	/*
-	if (keys & KEY_UP)
-	{
-		head.y -= 5;
-	}
-	else if (keys & KEY_DOWN)
-	{
-		head.y += 5;
-	}
-
-	if (keys & KEY_LEFT)
-	{
-		head.x -= 5;
-	}
-	else if (keys & KEY_RIGHT)
-	{
-		head.x += 5;
-	}
-	*/
-    	//printf("\n %s", head.direction);
-	
 	// Updating and drawing the screen
-	moveSnake(headReference, segmentsReference);
+	moveSnake(headReference, segments);
 	drawSnake(head, segments);
 	glFlush(0);
 	    
@@ -142,7 +112,7 @@ void drawSnake(struct snakeHead head, struct segment segments[])
 	glBoxFilled(head.x - head.width, head.y - head.height, head.x + head.width, head.y + head.height, head.color);
 
 	// Drawing the snake's body
-	for (int i = 0; i < head.size - 2; i++)
+	for (int i = 0; i < head.size; i++)
 	{
 		glBoxFilled(segments[i].x - head.width, segments[i].y - head.height, segments[i].x + head.width, segments[i].y + head.height, head.color);
 	}
@@ -150,37 +120,38 @@ void drawSnake(struct snakeHead head, struct segment segments[])
 	glEnd2D();
 }
 
-void moveSnake(struct snakeHead *head, struct segment (*segments)[MAX_SEGMENTS])
+void moveSnake(struct snakeHead *head, struct segment segments[])
 {
 	int prev_x = head -> x;
 	int prev_y = head -> y;
-
+	
+	// Moving the head
 	if (strcmp(head -> direction, "UP") == 0)
 	{
-		head -> y -= 2;
+		head -> y -= 5;
 	} else if (strcmp(head -> direction, "DOWN") == 0)
 	{
-		head -> y += 2;
+		head -> y += 5;
 	} else if (strcmp(head -> direction, "LEFT") ==  0)
 	{
-		head -> x -= 2;
+		head -> x -= 5;
 	} else if (strcmp(head -> direction, "RIGHT") == 0)
 	{
-		head -> x += 2;
+		head -> x += 5;
 
 	}
 	
-	
-	for (int i = 0; i < head -> size - 2; i++)
+	// Moving the segments
+	for (int i = 0; i < head -> size; i++)
 	{
 		int new_x = prev_x;
 		int new_y = prev_y;
 
-		int seg_prev_x = segments[i] -> x;
-		int seg_prev_y = segments[i] -> y;
+		int seg_prev_x = segments[i].x;
+		int seg_prev_y = segments[i].y;
 
-		segments[i] -> x = new_x;
-		segments[i] -> y = new_y;
+		segments[i].x = new_x;
+		segments[i].y = new_y;
 
 		prev_x = seg_prev_x;
 		prev_y = seg_prev_y;
