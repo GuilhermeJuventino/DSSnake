@@ -7,6 +7,7 @@
 #define HALF_WIDTH (SCREEN_WIDTH / 2)
 #define HALF_HEIGHT (SCREEN_HEIGHT / 2)
 #define MAX_SEGMENTS (1000)
+#define MAX_FPS (60)
 
 // Struct definitions
 struct snakeHead
@@ -17,6 +18,7 @@ struct snakeHead
 	int height;
 	int color;
 	int size;
+	int delay;
 	char* direction;
 };
 
@@ -31,6 +33,9 @@ struct segment segments[MAX_SEGMENTS];
 // Function declarations
 void drawSnake(struct snakeHead head, struct segment segments[]);
 void moveSnake(struct snakeHead *head, struct segment segments[]);
+
+// Timer
+int timer = 0;
 
 int main(int argc, char **argv)
 {
@@ -53,6 +58,8 @@ int main(int argc, char **argv)
     int starting_size = 3;
     head.size = starting_size;
 
+    head.delay = 5;
+
     segments[0].x = head.x;
     segments[0].y = head.y - 10;
 
@@ -65,9 +72,8 @@ int main(int argc, char **argv)
     struct snakeHead *headReference = &head; 
 
     int keys;
-
     while (1)
-    {
+    {	
 	// Reading input
 	scanKeys();
 
@@ -90,10 +96,22 @@ int main(int argc, char **argv)
 	}
 	
 	// Updating and drawing the screen
-	moveSnake(headReference, segments);
+	
+	// Waiting for the delay timer to end before moving the snake
+	if (timer >= head.delay)
+	{
+		moveSnake(headReference, segments);
+
+		// Reseting the timer
+		timer = 0;
+	} else
+	{
+		// Updating the timer
+		timer++;
+	}
 	drawSnake(head, segments);
 	glFlush(0);
-	    
+    
         // Wait for the screen refresh
         swiWaitForVBlank();
     }
@@ -125,7 +143,7 @@ void moveSnake(struct snakeHead *head, struct segment segments[])
 	int prev_x = head -> x;
 	int prev_y = head -> y;
 	
-	// Moving the head
+	// Moving the head	
 	if (strcmp(head -> direction, "UP") == 0)
 	{
 		head -> y -= 5;
