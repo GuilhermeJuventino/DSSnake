@@ -30,9 +30,18 @@ struct segment
 
 struct segment segments[MAX_SEGMENTS];
 
+// Type definitions
+typedef enum gameState
+{
+	TITLE_SCREEN,
+	IN_GAME,
+	GAME_OVER
+} gameState;
+
 // Function declarations
 void drawSnake(struct snakeHead head, struct segment segments[]);
 void moveSnake(struct snakeHead *head, struct segment segments[]);
+void changeGameState(gameState *state, int stateNum);
 
 // Timer
 int timer = 0;
@@ -42,7 +51,10 @@ int main(int argc, char **argv)
     videoSetMode(MODE_5_3D); // Setting video mode
     consoleDemoInit(); // Initialize console
     glScreen2D(); // Initialize GL in 2d mode
- 
+    
+    // Initial game state
+    gameState state = TITLE_SCREEN;
+    gameState *stateReference = &state;
 
     printf("\n Hello World!");
     
@@ -77,6 +89,79 @@ int main(int argc, char **argv)
 	// Reading input
 	scanKeys();
 
+	switch (state)
+	{
+		case TITLE_SCREEN:
+			printf("\nTitle Screen");
+			
+			keys = keysDown();
+
+			if (keys & KEY_START)
+			{
+				changeGameState(stateReference, 1);
+			}
+			break;
+		case IN_GAME:
+			/*
+			printf("\nIn Game");
+
+			keys = keysDown();
+
+			if (keys)
+			{
+				changeGameState(stateReference, 2);
+			}
+			*/
+
+			
+			keys = keysHeld();
+	
+			if (keys & KEY_UP && strcmp(head.direction, "DOWN") != 0)
+			{
+				head.direction = "UP";
+			} else if (keys & KEY_DOWN && strcmp(head.direction, "UP") != 0)
+			{
+				head.direction = "DOWN";
+			}
+
+			if (keys & KEY_LEFT && strcmp(head.direction, "RIGHT") != 0)
+			{
+				head.direction = "LEFT";
+			} else if (keys & KEY_RIGHT && strcmp(head.direction, "LEFT") != 0)
+			{
+				head.direction = "RIGHT";
+			}
+	
+			// Updating and drawing the screen
+	
+			// Waiting for the delay timer to end before moving the snake
+			if (timer >= head.delay)
+			{
+				moveSnake(headReference, segments);
+
+				// Reseting the timer
+				timer = 0;
+			} else
+			{
+				// Updating the timer
+				timer++;
+			}
+			drawSnake(head, segments);
+			
+			break;
+		case GAME_OVER:
+			printf("\nGame Over");
+
+			keys = keysDown();
+
+			if (keys)
+			{
+				changeGameState(stateReference, 0);
+			}
+			break;
+	}
+	
+	/*
 	keys = keysHeld();
 	
 	if (keys & KEY_UP && strcmp(head.direction, "DOWN") != 0)
@@ -110,15 +195,16 @@ int main(int argc, char **argv)
 		timer++;
 	}
 	drawSnake(head, segments);
+	*/
 	glFlush(0);
     
-        // Wait for the screen refresh
-        swiWaitForVBlank();
-    }
+       	 // Wait for the screen refresh
+       	 swiWaitForVBlank();
+    	}
 
-    // If this is reached, the program will return to the loader if the loader
-    // supports it.
-    return 0;
+    	// If this is reached, the program will return to the loader if the loader
+    	// supports it.
+    	return 0;
 }
 
 void drawSnake(struct snakeHead head, struct segment segments[])
@@ -176,4 +262,21 @@ void moveSnake(struct snakeHead *head, struct segment segments[])
 
 	}
 	
+}
+
+void changeGameState(gameState *state, int stateNum)
+{
+	*state = stateNum;
+	/*
+	if (stateNum == 0)
+	{
+		state = TITLE_SCREEN;
+	} else if (stateNum == 1)
+	{
+		state = IN_GAME;
+	} else if (stateNum == 2)
+	{
+		state = GAME_OVER;
+	}
+	*/
 }
