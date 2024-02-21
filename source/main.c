@@ -41,6 +41,7 @@ typedef enum gameState
 // Function declarations
 void drawSnake(struct snakeHead head, struct segment segments[]);
 void moveSnake(struct snakeHead *head, struct segment segments[]);
+void growSnake(struct snakeHead *head, struct segment segments[]);
 void changeGameState(gameState *state, int stateNum);
 int checkSnakeCollision(struct snakeHead head, struct segment segments[]);
 int checkWallCollision(struct snakeHead head);
@@ -116,6 +117,13 @@ int main(int argc, char **argv)
 			{
 				head.direction = "RIGHT";
 			}
+			
+			/*
+			if (keys & KEY_A)
+			{
+				growSnake(headReference, segments);	
+			}
+			*/
 	
 			// Updating and drawing the screen
 	
@@ -224,6 +232,19 @@ void moveSnake(struct snakeHead *head, struct segment segments[])
 
 	}
 	
+}
+
+void growSnake(struct snakeHead *head, struct segment segments[])
+{
+	//Increasing the snake's size
+	int newSize = head -> size + 1;
+
+	if (newSize < MAX_SEGMENTS)
+	{
+		segments[newSize].x = -90;
+		segments[newSize].y = -90;
+		head -> size = newSize;
+	}
 }
 
 int checkSnakeCollision(struct snakeHead head, struct segment segments[])
