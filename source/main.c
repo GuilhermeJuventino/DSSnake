@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #include <nds.h>
 #include <gl2d.h>
 
@@ -30,6 +32,15 @@ struct segment
 
 struct segment segments[MAX_SEGMENTS];
 
+struct apple
+{
+	int x;
+	int y;
+	int width;
+	int height;
+	int color;
+};
+
 // Type definitions
 typedef enum gameState
 {
@@ -45,6 +56,9 @@ void growSnake(struct snakeHead *head, struct segment segments[]);
 void changeGameState(gameState *state, int stateNum);
 int checkSnakeCollision(struct snakeHead head, struct segment segments[]);
 int checkWallCollision(struct snakeHead head);
+int checkAppleCollision(struct snakeHead head, struct apple apple);
+void positionApple(struct apple *apple, struct snakeHead head, struct segment segments[]);
+void drawApple(struct apple apple);
 void initGame(struct snakeHead *head, struct segment segments[]);
 
 // Timer
@@ -53,6 +67,7 @@ int timer = 0;
 // CollisionVariables
 int hasCollidedWithItself;
 int hasCollidedWithWalls;
+int hasCollidedWithApple;
 
 // Snake's starting size
 int starting_size = 3;
@@ -66,8 +81,6 @@ int main(int argc, char **argv)
     // Initial game state
     gameState state = TITLE_SCREEN;
     gameState *stateReference = &state;
-
-    printf("\n Hello World!");
     
     // Creating the snake head
     struct snakeHead head;
@@ -77,9 +90,20 @@ int main(int argc, char **argv)
 
     head.delay = 5;
 
-    struct snakeHead *headReference = &head; 
+    struct snakeHead *headReference = &head;
+	
+    // Creating the apple
+    struct apple apple;
+    apple.width = 5;
+    apple.height = 5;
+    apple.color = RGB15(255, 0, 0);
+
+    struct apple *appleReference = &apple;
 
     int keys;
+
+    // Initializing RNG
+    srand(time(0));
 
     while (1)
     {	
@@ -89,13 +113,16 @@ int main(int argc, char **argv)
 	switch (state)
 	{
 		case TITLE_SCREEN:
-			printf("\nTitle Screen");
+			consoleClear();
+			printf("\nTitle Screen:\nPress start to play");
 			
 			keys = keysUp();
 
 			if (keys & KEY_START)
 			{
 				initGame(headReference, segments);
+				positionApple(appleReference, head, segments);
+				consoleClear();
 				changeGameState(stateReference, 1);
 			}
 			break;
@@ -118,13 +145,6 @@ int main(int argc, char **argv)
 				head.direction = "RIGHT";
 			}
 			
-			/*
-			if (keys & KEY_A)
-			{
-				growSnake(headReference, segments);	
-			}
-			*/
-	
 			// Updating and drawing the screen
 	
 			// Waiting for the delay timer to end before moving the snake
@@ -143,26 +163,39 @@ int main(int argc, char **argv)
 			// Collision detection
 			hasCollidedWithItself = checkSnakeCollision(head, segments);
 			hasCollidedWithWalls = checkWallCollision(head);
+			hasCollidedWithApple = checkAppleCollision(head, apple);
 
 
 			if (hasCollidedWithItself == 1 || hasCollidedWithWalls == 1)
 			{
-				printf("\nDEATH");	
 				changeGameState(stateReference, 2);
+			}
+
+			if (hasCollidedWithApple == 1)
+			{
+				positionApple(appleReference, head, segments);
+				growSnake(headReference, segments);
 			}
 			
 			// Drawing the snake
 			drawSnake(head, segments);
+
+			// drawing the apple
+			drawApple(apple);
 			
 			break;
 		case GAME_OVER:
-			printf("\nGame Over");
+			consoleClear();
+			printf("\nGame Over:\nPress start to try again");
 
 			keys = keysUp();
 
 			if (keys & KEY_START)
 			{
-				changeGameState(stateReference, 0);
+				initGame(headReference, segments);
+				positionApple(appleReference, head, segments);
+				consoleClear();
+				changeGameState(stateReference, 1);
 			}
 			break;
 	}
@@ -273,6 +306,69 @@ int checkWallCollision(struct snakeHead head)
 	}
 
 	return 0;
+}
+
+int checkAppleCollision(struct snakeHead head, struct apple apple)
+{
+	// Checking if the snake's head has collided with the apple
+	if (head.x < apple.x + apple.width
+			&& head.x + head.width > apple.x
+			&& head.y < apple.y + apple.height
+			&& head.y + head.height > apple.y)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+void positionApple(struct apple *apple, struct snakeHead head, struct segment segments[])
+{
+	int new_x;
+	int new_y;
+
+	int notOverlappingHead = 0;
+	int notOverlappingSegments = 0;
+	
+	// Generating a new randomized position for the apple while preventing it from overlapping with the snake
+	do
+	{
+		new_x = rand() % SCREEN_WIDTH;
+		new_y = rand() % SCREEN_HEIGHT;
+
+		if (new_x != head.x || new_y != head.y)
+		{
+			notOverlappingHead = 1;
+		} else
+		{
+			notOverlappingHead = 0;
+		}
+
+		for (int i = 0; i < head.size; i++)
+		{
+			if (new_x != segments[i].x || new_y != segments[i].x)
+			{
+				notOverlappingSegments = 1;
+			} else
+			{
+				notOverlappingSegments = 0;
+			}	
+		}
+	} while (notOverlappingHead != 1 || notOverlappingSegments != 1);
+	
+	// Changing the apple's position
+	apple -> x = new_x;
+	apple -> y = new_y;
+}
+
+void drawApple(struct apple apple)
+{
+	glBegin2D(); // Set up GL for 2d mode
+		
+	// Drawing the apple
+	glBoxFilled(apple.x - apple.width, apple.y - apple.height, apple.x + apple.width, apple.y + apple.height, apple.color);
+
+	glEnd2D();
 }
 
 void initGame(struct snakeHead *head, struct segment segments[])
