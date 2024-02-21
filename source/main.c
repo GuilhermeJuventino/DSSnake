@@ -84,6 +84,7 @@ int main(int argc, char **argv)
     struct snakeHead *headReference = &head; 
 
     int keys;
+
     while (1)
     {	
 	// Reading input
@@ -94,7 +95,7 @@ int main(int argc, char **argv)
 		case TITLE_SCREEN:
 			printf("\nTitle Screen");
 			
-			keys = keysDown();
+			keys = keysUp();
 
 			if (keys & KEY_START)
 			{
@@ -102,18 +103,6 @@ int main(int argc, char **argv)
 			}
 			break;
 		case IN_GAME:
-			/*
-			printf("\nIn Game");
-
-			keys = keysDown();
-
-			if (keys)
-			{
-				changeGameState(stateReference, 2);
-			}
-			*/
-
-			
 			keys = keysHeld();
 	
 			if (keys & KEY_UP && strcmp(head.direction, "DOWN") != 0)
@@ -152,7 +141,7 @@ int main(int argc, char **argv)
 		case GAME_OVER:
 			printf("\nGame Over");
 
-			keys = keysDown();
+			keys = keysUp();
 
 			if (keys)
 			{
@@ -161,45 +150,10 @@ int main(int argc, char **argv)
 			break;
 	}
 	
-	/*
-	keys = keysHeld();
-	
-	if (keys & KEY_UP && strcmp(head.direction, "DOWN") != 0)
-	{
-			head.direction = "UP";
-	} else if (keys & KEY_DOWN && strcmp(head.direction, "UP") != 0)
-	{
-		head.direction = "DOWN";
-	}
-
-	if (keys & KEY_LEFT && strcmp(head.direction, "RIGHT") != 0)
-	{
-		head.direction = "LEFT";
-	} else if (keys & KEY_RIGHT && strcmp(head.direction, "LEFT") != 0)
-	{
-		head.direction = "RIGHT";
-	}
-	
-	// Updating and drawing the screen
-	
-	// Waiting for the delay timer to end before moving the snake
-	if (timer >= head.delay)
-	{
-		moveSnake(headReference, segments);
-
-		// Reseting the timer
-		timer = 0;
-	} else
-	{
-		// Updating the timer
-		timer++;
-	}
-	drawSnake(head, segments);
-	*/
 	glFlush(0);
     
-       	 // Wait for the screen refresh
-       	 swiWaitForVBlank();
+       	// Wait for the screen refresh
+       	swiWaitForVBlank();
     	}
 
     	// If this is reached, the program will return to the loader if the loader
@@ -211,7 +165,6 @@ void drawSnake(struct snakeHead head, struct segment segments[])
 {
 	glBegin2D(); // Set up GL for 2d mode
 		
-	//glBoxFilled(200, 10, 250, 180, RGB15(255, 255, 255));
 	// Drawing the snake's head
 	glBoxFilled(head.x - head.width, head.y - head.height, head.x + head.width, head.y + head.height, head.color);
 
@@ -267,16 +220,4 @@ void moveSnake(struct snakeHead *head, struct segment segments[])
 void changeGameState(gameState *state, int stateNum)
 {
 	*state = stateNum;
-	/*
-	if (stateNum == 0)
-	{
-		state = TITLE_SCREEN;
-	} else if (stateNum == 1)
-	{
-		state = IN_GAME;
-	} else if (stateNum == 2)
-	{
-		state = GAME_OVER;
-	}
-	*/
 }
